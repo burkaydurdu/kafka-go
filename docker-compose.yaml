@@ -10,6 +10,15 @@ services:
     ports:
       - 3306:3306
 
+  couchbase-db:
+    container_name: couchbase
+    image: couchbase
+    ports:
+      - 8091:8091
+      - 8092:8092
+      - 8093:8093
+      - 11210:11210
+
   adminer:
     container_name: adminer
     image: adminer
@@ -62,7 +71,7 @@ services:
 
   connect:
     container_name: connect
-    image: debezium/connect:1.7
+    build: ./debezium
     ports:
       - 8083:8083
     environment:
@@ -75,3 +84,4 @@ services:
       - zookeeper:zookeeper
       - kafka:kafka
       - mysql:mysql
+      - couchbase-db:couchbase-db
