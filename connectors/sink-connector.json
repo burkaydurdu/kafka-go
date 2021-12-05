@@ -1,0 +1,20 @@
+{
+  "name": "sink-connector",
+  "config": {
+    "connector.class": "com.couchbase.connect.kafka.CouchbaseSinkConnector",
+    "tasks.max": "2",
+    "topics" : "dbserver1.inventory.customers",
+
+    "couchbase.seed.nodes": "couchbase-db",
+    "couchbase.bootstrap.timeout": "10s",
+    "couchbase.bucket" : "rabbit",
+    "couchbase.username" : "Administrator",
+    "couchbase.password" : "password",
+
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "key.converter.schemas.enable": "false",
+
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}
