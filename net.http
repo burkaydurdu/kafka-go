@@ -1,18 +1,28 @@
-// Create Connector
+// Create Source And Sink Connector
 POST http://localhost:8083/connectors
 Content-Type: application/json
 Accept:application/json
 
-< ./connectors/source-connector.json
+#< ./connectors/source-connector.json
+< ./connectors/sink-connector.json
 
 ###
 
-// Update Connector
+// Update Source Connector
 PUT http://localhost:8083/connectors/source-connector/config
 Content-Type: application/json
 Accept:application/json
 
 < ./connectors/source-connector-edit.json
+
+###
+
+// Update Sink Connector
+PUT http://localhost:8083/connectors/sink-connector/config
+Content-Type: application/json
+Accept:application/json
+
+< ./connectors/sink-connector-edit.json
 
 ###
 
