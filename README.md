@@ -4,20 +4,20 @@
 
 ### Setup Docker
 ```
-    make docker
+make docker
 ```
 
 ### Setup Couchbase
 ```
-    make couchbase
+make couchbase
 ```
 
 ### Apply connectors
 ```
-    make connector
+make connector
 ```
 
 ### Run GO App
 ```
-    make run
+make run
 ```
