@@ -1,0 +1,42 @@
+{
+  "name": "source-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+
+    "database.hostname": "mysql",
+    "database.port": "3306",
+    "database.user": "debezium",
+    "database.password": "dbz",
+    "database.server.id": "184054",
+    "database.server.name": "dbserver1",
+    "database.include.list": "inventory",
+    "database.history.kafka.bootstrap.servers": "kafka:9092",
+    "database.history.kafka.topic": "schema-changes.inventory",
+    "database.allowPublicKeyRetrieval": "true",
+
+    "tombstones.on.delete": "true",
+    "snapshot.locking.mode": "none",
+
+    "table.include.list": "inventory.customers",
+
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "key.converter.schemas.enable": "false",
+
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+
+    "predicates": "IsTargetTable",
+    "predicates.IsTargetTable.pattern": "dbserver1.inventory.*",
+    "predicates.IsTargetTable.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+
+    "transforms": "unwrap,extract",
+    "transforms.extract.field": "id",
+    "transforms.extract.predicate": "IsTargetTable",
+    "transforms.extract.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.unwrap.delete.handling.mode": "drop",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.predicate": "IsTargetTable",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}

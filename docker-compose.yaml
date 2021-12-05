@@ -1,0 +1,77 @@
+services:
+  mysql:
+    container_name: mysql
+    image: debezium/example-mysql:1.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: debezium
+      MYSQL_USER: mysqluser
+      MYSQL_PASSWORD: mysqlpw
+    ports:
+      - 3306:3306
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    ports:
+      - 8080:8080
+
+  zookeeper:
+    container_name: zookeeper
+    image: debezium/zookeeper:1.7
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    container_name: kafka
+    image: debezium/kafka:1.7
+    environment:
+      - BROKER_ID=1
+      - ZOOKEEPER_CONNECT=zookeeper
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    ports:
+      - 9093:9093
+    expose:
+      - 9092
+    links:
+      - zookeeper:zookeeper
+
+  kowl:
+    container_name: kowl
+    image: quay.io/cloudhut/kowl:v1.2.1
+    restart: on-failure
+    hostname: kowl
+    volumes:
+      - ./kowl-config.yaml:/etc/kowl/config.yaml
+    ports:
+      - 8081:8080
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+    depends_on:
+      - kafka
+
+  connect:
+    container_name: connect
+    image: debezium/connect:1.7
+    ports:
+      - 8083:8083
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: my_connect_configs
+      OFFSET_STORAGE_TOPIC: my_connect_offsets
+      STATUS_STORAGE_TOPIC: my_connect_statuses
+    links:
+      - zookeeper:zookeeper
+      - kafka:kafka
+      - mysql:mysql

@@ -1,0 +1,20 @@
+// Create Connector
+POST http://localhost:8083/connectors
+Content-Type: application/json
+Accept:application/json
+
+< ./connectors/source-connector.json
+
+###
+
+// Update Connector
+PUT http://localhost:8083/connectors/source-connector/config
+Content-Type: application/json
+Accept:application/json
+
+< ./connectors/source-connector-edit.json
+
+###
+
+// Connectors Status
+GET http://localhost:8083/connectors/source-connector/status
